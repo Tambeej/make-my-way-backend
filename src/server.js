@@ -1,9 +1,10 @@
 const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
-const config = require("../config/env");
 
 dotenv.config();
+const config = require("./config/env");
+const connectDB = require("./config/db");
 
 const app = express();
 
@@ -18,16 +19,14 @@ app.get("/", (req, res) => {
 });
 
 //Connect to mongo API
-const mongoose = require("mongoose");
-mongoose
-  .connect(config.mongoUri, {
-    useNewUrlParser: true,
-  })
-  .then(() => console.log("Connected to MongoDB"))
-  .catch((err) => {
-    console.error("MongoDB connection error:", err);
-    process.exit(1); // Exit if connection fails
+const startServer = async () => {
+  await connectDB(); // Connect to DB
+  app.listen(config.port, () => {
+    console.log(`Server running on port ${config.port}`);
   });
+};
+
+startServer();
 
 // Set port from environment variable or default to 3000
 const PORT = config.port;
