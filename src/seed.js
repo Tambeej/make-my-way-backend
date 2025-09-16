@@ -1,8 +1,7 @@
 import mongoose from 'mongoose';
 import connectDB from './config/db';
 import User from '../models/User';
-import tripSchema from '../models/Trip';
-import sharedTripSchema from '../models/SharedTrip';
+import Trip from '../models/Trip';
 
 const mockUsers = [
   {
