@@ -1,8 +1,8 @@
-const mongoose = require('mongoose');
-const connectDB = require('./config/db');
-const User = require('../models/User');
-const Trip = require('../models/Trip');
-const SharedTrip = require('../models/SharedTrip');
+import mongoose from 'mongoose';
+import connectDB from './config/db';
+import User from '../models/User';
+import tripSchema from '../models/Trip';
+import sharedTripSchema from '../models/SharedTrip';
 
 const mockUsers = [
   {
