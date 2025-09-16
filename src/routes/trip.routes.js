@@ -14,40 +14,22 @@ import { leaveSharedTripController } from "../controllers/leaveSharedTrip.contro
 const router = Router()
 
 //Google API and Gemini AI
-router.post("/planTrip", planTripController)
-router.post("/tripPath", getTripPathController)
+router.post("/plan", planTripController) // Generate a travel plan (using Google/Gemini APIs)
+router.post("/path", getTripPathController) // Get the trip path/route polyline between locations
 
-//Trip CRUD
-router.get("/my", getTripsOfUserController)
-router.get("/sharedWithMe", getSharedWithUserTripsController)
-router.get("/:id", getTripByIdController)
-
-router.post("/save", saveTripController)
-router.delete("/:id", deleteTripController)
+//Trips of user
+router.get("/my", getTripsOfUserController) // Get all trips created by the current user
+router.get("/shared", getSharedWithUserTripsController) // Get trips shared with the current user
 
 //Trip sharing
-router.post("/:id/share", inviteUserController)
-router.delete("/:id/share/", rejectInviteController)
-router.get("/:id/members", getMembersController)
-router.delete("/sharedWithMe/:id", leaveSharedTripController)
+router.post("/:id/share", inviteUserController) // Invite another user to a trip by email
+router.get("/:id/members", getMembersController) // Get all members of a trip (owner + invited users)
+router.delete("/:id/share", rejectInviteController) // Owner removes a user from the trip (revoke access)
+router.delete("/shared/:id", leaveSharedTripController) // Current user leaves a shared trip
 
-// // Google API + planning
-// router.post("/plan", planTripController)
-// router.post("/path", getTripPathController)
-
-// // Trips of user
-// router.get("/my", getTripsOfUserController)
-// router.get("/shared", getSharedWithUserTripsController)
-
-// // Trip sharing
-// router.post("/:id/share", inviteUserController)          // пригласить
-// router.get("/:id/members", getMembersController)         // список участников
-// router.delete("/:id/share", rejectInviteController)      // владелец удаляет участника
-// router.delete("/shared/:id", leaveSharedTripController)  // сам пользователь уходит из чужого трипа
-
-// // Trip CRUD
-// router.post("/", saveTripController)
-// router.get("/:id", getTripByIdController)
-// router.delete("/:id", deleteTripController)
+//Trip CRUD
+router.post("/", saveTripController) // Create and save a new trip
+router.get("/:id", getTripByIdController) // Get trip details by trip ID
+router.delete("/:id", deleteTripController) // Delete a trip (only owner can delete)
 
 export default router
