@@ -1,6 +1,8 @@
+import { MongoTopologyClosedError } from 'mongodb';
 import mongoose from 'mongoose';
 
 const tripSchema = new mongoose.Schema({
+  origin: { type: String, required: true },
   destination: { type: String, required: true },
   startDate:{ type: Date, required: true}, 
     endDate: {
@@ -14,14 +16,12 @@ const tripSchema = new mongoose.Schema({
     },
   },
   itinerary: [{ day: Number, activity: String }], 
-  //budget: { type: Number, required: true }, ?
-  preferences: [{ type: String }],
   userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  tripPath:[{type:location}],
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
 });
 
-export default tripSchema;
 
 tripSchema.pre('save', function (next) {
   this.updatedAt = Date.now();
@@ -31,3 +31,5 @@ tripSchema.pre('findOneAndUpdate', function (next) {
   this.set({ updatedAt: Date.now() });
   next();
 });
+
+export default mongoose.model('Trip', tripSchema);

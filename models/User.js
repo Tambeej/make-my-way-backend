@@ -1,21 +1,18 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema({
   name: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   passwordHash: { type: String, required: true },
-  user_preferences: [{ type: String }],
-  role: {
-    type: String,
-    enum: ["guest", "user"],
-    default: "guest",
-    required: true,
+  preferences: {
+    activities: [{ type: String }],
+    food: [{ type: String }],
   },
+  sharedTrips: [{ type: mongoose.Schema.Types.ObjectId, ref: "Trip" }],
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
 });
 
-export default userSchema;
 userSchema.pre("save", function (next) {
   this.updatedAt = Date.now();
   next();
@@ -25,3 +22,5 @@ userSchema.pre("findOneAndUpdate", function (next) {
   this.set({ updatedAt: Date.now() });
   next();
 });
+
+export default mongoose.model("User", userSchema);
