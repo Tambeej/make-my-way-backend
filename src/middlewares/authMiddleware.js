@@ -1,8 +1,8 @@
-const jwt = require("jsonwebtoken");
+import jwt from "jsonwebtoken";
 
 const authenticate = (req, res, next) => {
   // const token = req.header("Authorization")?.replace("Bearer ", "");
-  const token = req.cookies.token
+  const token = req.cookies.token;
 
   if (!token) {
     throw { status: 401, message: "No token provided" };
@@ -10,14 +10,14 @@ const authenticate = (req, res, next) => {
 
   try {
     const decodedUser = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decodedUser; // Add user info to request
+    req.user = decodedUser;
     next();
   } catch (error) {
     if (error.name === "TokenExpiredError") {
-      throw { status: 401, message: "Token expired" };
+      return next({ status: 401, message: "Token expired" });
     }
-    throw { status: 401, message: "Invalid token" };
+    return next({ status: 401, message: "Invalid token" });
   }
 };
 
-module.exports = { authenticate };
+export default authenticate;
