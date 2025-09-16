@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const tripSchema = new mongoose.Schema({
   destination: { type: String, required: true },
@@ -21,7 +21,7 @@ const tripSchema = new mongoose.Schema({
   updatedAt: { type: Date, default: Date.now },
 });
 
-module.exports = mongoose.model('Trip', tripSchema);
+export default tripSchema;
 
 tripSchema.pre('save', function (next) {
   this.updatedAt = Date.now();

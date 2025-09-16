@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const sharedTripSchema = new mongoose.Schema({
   sharedWithUserId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
@@ -6,4 +6,5 @@ const sharedTripSchema = new mongoose.Schema({
   sharedAt: { type: Date, default: Date.now },
 });
 
-module.exports = mongoose.model('SharedTrip', sharedTripSchema);
+
+export default sharedTripSchema;

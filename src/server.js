@@ -1,10 +1,9 @@
-const express = require("express");
-const cors = require("cors");
-const dotenv = require("dotenv");
+import express from "express";
+import cors from "cors";
+import dotenv from "dotenv";
 
 dotenv.config();
-const config = require("./config/env");
-const connectDB = require("./config/db");
+import connectDB from "./config/db.js";
 
 const app = express();
 
@@ -21,17 +20,17 @@ app.get("/", (req, res) => {
 //Connect to mongo API
 const startServer = async () => {
   await connectDB(); // Connect to DB
-  app.listen(config.port, () => {
-    console.log(`Server running on port ${config.port}`);
+  app.listen(process.env.PORT, () => {
+    console.log(`Server running on port ${process.env.PORT}`);
   });
 };
 
 startServer();
 
 // Set port from environment variable or default to 3000
-const PORT = config.port;
+const PORT = process.env.PORT;
 
 // Start the server
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`Server running on port ${process.env.PORT}`);
 });
