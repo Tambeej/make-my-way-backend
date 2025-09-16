@@ -2,7 +2,7 @@ import mongoose from "mongoose"
 
 const ItinerarySchema = new mongoose.Schema({
   day: { type: Number, required: true },
-  categories: [
+  activities: [
     {
       category: { type: String, required: true },
       place: {

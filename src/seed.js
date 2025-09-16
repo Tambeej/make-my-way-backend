@@ -1,7 +1,7 @@
 import mongoose from "mongoose"
 import connectDB from "./config/db.js"
-import User from "../models/User.js"
-import Trip from "../models/Trip.js"
+import User from "./models/User.js"
+import Trip from "./models/Trip.js"
 
 // Mock data
 const mockUsers = [
@@ -63,7 +63,7 @@ const mockTrips = [
     itinerary: [
       {
         day: 1,
-        categories: [
+        activities: [
           {
             category: "sightseeing",
             place: {
@@ -81,7 +81,7 @@ const mockTrips = [
       },
       {
         day: 2,
-        categories: [
+        activities: [
           {
             category: "museum",
             place: {
@@ -125,7 +125,7 @@ const mockTrips = [
     itinerary: [
       {
         day: 1,
-        categories: [
+        activities: [
           {
             category: "sightseeing",
             place: {
@@ -143,7 +143,7 @@ const mockTrips = [
       },
       {
         day: 2,
-        categories: [
+        activities: [
           {
             category: "temple",
             place: {
@@ -187,7 +187,7 @@ const mockTrips = [
     itinerary: [
       {
         day: 1,
-        categories: [
+        activities: [
           {
             category: "sightseeing",
             place: {
@@ -205,7 +205,7 @@ const mockTrips = [
       },
       {
         day: 2,
-        categories: [
+        activities: [
           {
             category: "historical",
             place: {
