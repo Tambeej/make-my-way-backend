@@ -6,6 +6,8 @@ export const getTripByIdController = async (req, res) => {
   try {
     const tripId = req.params.id
 
+    //TODO: check if user is owner or shared with user
+
     const trip = await Trip.findById(tripId).populate("userId")
 
     if (!trip) {
