@@ -19,7 +19,7 @@ app.get("/", (req, res) => {
   res.send("Welcome to the Trip Planner API!")
 })
 
-app.use("/api/trip", tripRouter)
+app.use("/trip", tripRouter)
 
 //Connect to mongo API
 const startServer = async () => {
@@ -29,4 +29,4 @@ const startServer = async () => {
   })
 }
 
-startServer();
+startServer()
