@@ -4,9 +4,7 @@ import Trip from "../models/Trip.js"
 
 export const getSharedWithUserTripsController = async (req, res) => {
   try {
-    //TODO: get userId from auth middleware
-    //const userId = req.user.id // Assuming user ID is available in req.user
-    const userId = "68c9558bf52e0dab4349930c" // Placeholder user ID
+    const userId = req.user.id
 
     const user = await User.findById(userId)
 

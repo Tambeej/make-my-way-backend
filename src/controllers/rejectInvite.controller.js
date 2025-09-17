@@ -3,18 +3,8 @@ import Trip from "../models/Trip.js"
 
 export const rejectInviteController = async (req, res) => {
   try {
-    //TODO: get userId from auth middleware
-    //const userId = req.user.id // Assuming user ID is available in req.user
-    const userId = "68c9558bf52e0dab4349930a" // Placeholder user ID
     const invitedUserEmail = req.body.invitedUserEmail
     const tripId = req.params.id
-
-    const trip = await Trip.findById(tripId)
-    if (!trip) return res.status(404).json({ error: "Trip not found" })
-
-    if (trip.userId.toString() !== userId.toString()) {
-      return res.status(403).json({ error: "You are not the owner of this trip" })
-    }
 
     const updatedUser = await User.findOneAndUpdate(
       { email: invitedUserEmail },
