@@ -6,7 +6,7 @@ export const deleteTripController = async (req, res) => {
   try {
     const tripId = req.params.id
     //check if user is owner before deleting
-    const userId = "68c9558bf52e0dab4349930a" // Placeholder user ID
+    const userId = req.user.id
     const trip = await Trip.findById(tripId)
 
     if (!trip) {
