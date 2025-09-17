@@ -21,7 +21,7 @@ const authModel = {
     }
   },
 
-  async register(name, email, password, pref_food, pref_activities) {
+  async register(name, email, password, pref_food = [], pref_activities = []) {
     try {
       const existingUser = await User.findOne({ email });
       if (existingUser) {
