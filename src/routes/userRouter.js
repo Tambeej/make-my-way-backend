@@ -5,9 +5,7 @@ import {
   getUserById,
   updateUser,
   addPreference,
-  addSharedTrip,
   removePreference,
-  removeSharedTrip,
 } from "../controllers/userController.js";
 import authenticate from "../middlewares/authMiddleware.js";
 

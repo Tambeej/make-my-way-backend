@@ -1,5 +1,5 @@
-import User from './User.js';
-import bcrypt from 'bcryptjs';
+import User from "./User.js";
+import bcrypt from "bcryptjs";
 
 const authModel = {
   async login(email, password) {
@@ -17,30 +17,30 @@ const authModel = {
       const { passwordHash, ...safeUser } = user.toObject();
       return safeUser;
     } catch (err) {
-      throw new Error('Login error');
+      throw new Error("Login error");
     }
   },
 
-  async register(name, email, password) {
+  async register(name, email, password, pref_food, pref_activities) {
     try {
       const existingUser = await User.findOne({ email });
       if (existingUser) {
-        throw new Error('Email already exists');
+        throw new Error("Email already exists");
       }
 
-      const passwordHash = await bcrypt.hash(password, 12); 
+      const passwordHash = await bcrypt.hash(password, 12);
       const user = new User({
         name,
         email,
         passwordHash,
-        preferences: { activities: [], food: [] }, 
+        preferences: { activities: pref_activities, food: pref_food },
         sharedTrips: [],
       });
       await user.save();
       const { passwordHash: _, ...safeUser } = user.toObject();
       return safeUser;
     } catch (err) {
-      throw new Error(err.message || 'Registration error');
+      throw new Error(err.message || "Registration error");
     }
   },
 };

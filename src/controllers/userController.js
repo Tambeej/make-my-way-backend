@@ -135,77 +135,11 @@ const removePreference = async (req, res, next) => {
   }
 };
 
-const addSharedTrip = async (req, res, next) => {
-  try {
-    // if (req.user.id !== req.params.id) {
-    //   return next({ status: 403, message: 'Forbidden: You can only modify your own shared trips' });
-    // }
-    const { tripId } = req.body;
-    if (!tripId || !mongoose.isValidObjectId(tripId)) {
-      return next({ status: 400, message: "Invalid tripId" });
-    }
-    const user = await User.findById(req.params.id);
-    if (!user) {
-      return next({ status: 404, message: "User not found" });
-    }
-    const trip = await Trip.findById(tripId);
-    if (!trip) {
-      return next({ status: 404, message: "Trip not found" });
-    }
-    if (user.sharedTrips.includes(tripId)) {
-      return next({ status: 400, message: "Trip already shared with user" });
-    }
-    user.sharedTrips.push(tripId);
-    await user.save();
-    res
-      .status(200)
-      .json({
-        message: "Trip added to shared trips",
-        user: { ...user.toObject(), passwordHash: undefined },
-      });
-  } catch (err) {
-    next({ status: 500, message: err.message || "Error adding shared trip" });
-  }
-};
-
-const removeSharedTrip = async (req, res, next) => {
-  try {
-    // if (req.user.id !== req.params.id) {
-    //   return next({ status: 403, message: 'Forbidden: You can only modify your own shared trips' });
-    // }
-    const { tripId } = req.body;
-    if (!tripId || !mongoose.isValidObjectId(tripId)) {
-      return next({ status: 400, message: "Invalid tripId" });
-    }
-    const user = await User.findById(req.params.id);
-    if (!user) {
-      return next({ status: 404, message: "User not found" });
-    }
-    if (!user.sharedTrips.includes(tripId)) {
-      return next({ status: 400, message: "Trip not found in shared trips" });
-    }
-    user.sharedTrips = user.sharedTrips.filter(
-      (id) => id.toString() !== tripId
-    );
-    await user.save();
-    res
-      .status(200)
-      .json({
-        message: "Trip removed from shared trips",
-        user: { ...user.toObject(), passwordHash: undefined },
-      });
-  } catch (err) {
-    next({ status: 500, message: err.message || "Error removing shared trip" });
-  }
-};
-
 export {
   updateUser,
   deleteUser,
   getAllUsers,
   getUserById,
   addPreference,
-  addSharedTrip,
   removePreference,
-  removeSharedTrip,
 };
