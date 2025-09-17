@@ -3,19 +3,20 @@ import cors from "cors"
 import dotenv from "dotenv"
 import cookieParser from "cookie-parser"
 
-dotenv.config()
-import connectDB from "./config/db.js"
-
-import tripRouter from "./routes/trip.routes.js"
-import authRouter from "./routes/authRouter.js"
-import authenticate from "./middlewares/authMiddleware.js"
+dotenv.config();
+import connectDB from "./config/db.js";
+import tripRouter from "./routes/trip.routes.js";
+import authRouter from "./routes/authRouter.js";
+import userRouter from "./routes/userRouter.js";
+import authenticate from "./middlewares/authMiddleware.js";
 
 const app = express()
 
 // Middleware
-app.use(cors({ credentials: true, origin: "http://localhost:3000" })) // Adjust for frontend
-app.use(express.json())
-app.use(cookieParser())
+app.use(cors({ credentials: true, origin: "http://localhost:3000" })); // Adjust for frontend
+app.use(cookieParser());
+app.use(express.json());
+
 
 //Routes
 //test api
@@ -25,7 +26,9 @@ app.get("/", (req, res) => {
 
 app.use("/auth", authRouter)
 
-app.use("/trip", tripRouter)
+app.use("/api/trip", tripRouter);
+app.use("/api/users", userRouter);
+
 
 app.use((err, req, res, next) => {
   console.error(err.stack)
@@ -40,4 +43,14 @@ const startServer = async () => {
   })
 }
 
-startServer()
+startServer();
+
+// Error Handling Middleware (always in the END)
+app.use((err, req, res, next) => {
+  console.error(err);
+  res.status(err.status || 500).json({
+    success: false,
+    message: err.message || "Server Error",
+  });
+});
+
