@@ -21,7 +21,5 @@ router.put("/:id", updateUser);
 router.delete("/:id", deleteUser);
 router.post("/:id/preferences", addPreference);
 router.delete("/:id/preferences", removePreference);
-router.post("/:id/shared-trips", addSharedTrip);
-router.delete("/:id/shared-trips", removeSharedTrip);
 
 export default router;
