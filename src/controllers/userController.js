@@ -66,5 +66,146 @@ const deleteUser = async (req, res, next) => {
     next({ status: 500, message: err.message || "Error deleting user" });
   }
 };
+const addPreference = async (req, res, next) => {
+  try {
+    // if (req.user.id !== req.params.id) {
+    //   return next({ status: 403, message: 'Forbidden: You can only modify your own preferences' });
+    // }
+    const { type, value } = req.body;
+    if (!type || !value || !["food", "activities"].includes(type)) {
+      return next({
+        status: 400,
+        message: 'Invalid type (must be "food" or "activities") or value',
+      });
+    }
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return next({ status: 404, message: "User not found" });
+    }
+    if (user.preferences[type].includes(value)) {
+      return next({
+        status: 400,
+        message: `${value} already exists in ${type}`,
+      });
+    }
+    user.preferences[type].push(value);
+    await user.save();
+    res
+      .status(200)
+      .json({
+        message: `${value} added to ${type} preferences`,
+        user: { ...user.toObject(), passwordHash: undefined },
+      });
+  } catch (err) {
+    next({ status: 500, message: err.message || "Error adding preference" });
+  }
+};
 
-export { updateUser, deleteUser, getAllUsers, getUserById };
+const removePreference = async (req, res, next) => {
+  try {
+    // if (req.user.id !== req.params.id) {
+    //   return next({ status: 403, message: 'Forbidden: You can only modify your own preferences' });
+    // }
+    const { type, value } = req.body;
+    if (!type || !value || !["food", "activities"].includes(type)) {
+      return next({
+        status: 400,
+        message: 'Invalid type (must be "food" or "activities") or value',
+      });
+    }
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return next({ status: 404, message: "User not found" });
+    }
+    if (!user.preferences[type].includes(value)) {
+      return next({ status: 400, message: `${value} not found in ${type}` });
+    }
+    user.preferences[type] = user.preferences[type].filter(
+      (item) => item !== value
+    );
+    await user.save();
+    res
+      .status(200)
+      .json({
+        message: `${value} removed from ${type} preferences`,
+        user: { ...user.toObject(), passwordHash: undefined },
+      });
+  } catch (err) {
+    next({ status: 500, message: err.message || "Error removing preference" });
+  }
+};
+
+const addSharedTrip = async (req, res, next) => {
+  try {
+    // if (req.user.id !== req.params.id) {
+    //   return next({ status: 403, message: 'Forbidden: You can only modify your own shared trips' });
+    // }
+    const { tripId } = req.body;
+    if (!tripId || !mongoose.isValidObjectId(tripId)) {
+      return next({ status: 400, message: "Invalid tripId" });
+    }
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return next({ status: 404, message: "User not found" });
+    }
+    const trip = await Trip.findById(tripId);
+    if (!trip) {
+      return next({ status: 404, message: "Trip not found" });
+    }
+    if (user.sharedTrips.includes(tripId)) {
+      return next({ status: 400, message: "Trip already shared with user" });
+    }
+    user.sharedTrips.push(tripId);
+    await user.save();
+    res
+      .status(200)
+      .json({
+        message: "Trip added to shared trips",
+        user: { ...user.toObject(), passwordHash: undefined },
+      });
+  } catch (err) {
+    next({ status: 500, message: err.message || "Error adding shared trip" });
+  }
+};
+
+const removeSharedTrip = async (req, res, next) => {
+  try {
+    // if (req.user.id !== req.params.id) {
+    //   return next({ status: 403, message: 'Forbidden: You can only modify your own shared trips' });
+    // }
+    const { tripId } = req.body;
+    if (!tripId || !mongoose.isValidObjectId(tripId)) {
+      return next({ status: 400, message: "Invalid tripId" });
+    }
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return next({ status: 404, message: "User not found" });
+    }
+    if (!user.sharedTrips.includes(tripId)) {
+      return next({ status: 400, message: "Trip not found in shared trips" });
+    }
+    user.sharedTrips = user.sharedTrips.filter(
+      (id) => id.toString() !== tripId
+    );
+    await user.save();
+    res
+      .status(200)
+      .json({
+        message: "Trip removed from shared trips",
+        user: { ...user.toObject(), passwordHash: undefined },
+      });
+  } catch (err) {
+    next({ status: 500, message: err.message || "Error removing shared trip" });
+  }
+};
+
+export {
+  updateUser,
+  deleteUser,
+  getAllUsers,
+  getUserById,
+  addPreference,
+  addSharedTrip,
+  removePreference,
+  removeSharedTrip,
+};
