@@ -1,6 +1,20 @@
 import authModel from "../models/authModel.js";
 import jwt from "jsonwebtoken";
 
+const generateAccessToken = (user) => {
+  return jwt.sign({ id: user._id, email: user.email }, process.env.JWT_SECRET, {
+    expiresIn: "24h",
+  });
+};
+
+const generateRefreshToken = (user) => {
+  return jwt.sign(
+    { id: user._id, email: user.email },
+    process.env.JWT_REFRESH_SECRET,
+    { expiresIn: "7d" }
+  );
+};
+
 async function login(req, res, next) {
   try {
     const { email, password } = req.body;
@@ -11,15 +25,19 @@ async function login(req, res, next) {
     if (!user) {
       next({ status: 401, message: "invalid email or password" });
     }
-    const payload = { id: user._id, email: user.email };
-    const token = jwt.sign(payload, process.env.JWT_SECRET, {
-      expiresIn: "24h",
-    });
-
-    res.cookie("token", token, {
+    const accessToken = generateAccessToken(user);
+    const refreshToken = generateRefreshToken(user);
+    res.cookie("accessToken", accessToken, {
       httpOnly: true,
       sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-      secure: process.env.NODE_ENV === "production" ? true : false,
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 24 * 60 * 60 * 1000, // 24 hours
+    });
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
 
     res.status(200).json({ message: "Login successful", user });
@@ -36,10 +54,81 @@ async function register(req, res, next) {
     }
 
     const user = await authModel.register(name, email, password);
+
+    const accessToken = generateAccessToken(user);
+    const refreshToken = generateRefreshToken(user);
+    res.cookie("accessToken", accessToken, {
+      httpOnly: true,
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 24 * 60 * 60 * 1000, // 24 hours
+    });
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    });
     res.status(201).json({ message: "Registration successful", user });
   } catch (err) {
     next({ status: 400, message: err.message });
   }
 }
+const refreshToken = async (req, res, next) => {
+  try {
+    const refreshToken = req.cookies.refreshToken;
+    if (!refreshToken) {
+      return next({ status: 401, message: "No refresh token provided" });
+    }
+    let decoded;
+    try {
+      decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
+    } catch (err) {
+      return next({ status: 401, message: "Invalid or expired refresh token" });
+    }
+    const user = await authModel.login(decoded.email, null); // No password needed
+    if (!user) {
+      return next({ status: 401, message: "User not found" });
+    }
+    const newAccessToken = generateAccessToken(user);
+    res.cookie("accessToken", newAccessToken, {
+      httpOnly: true,
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 24 * 60 * 60 * 1000, // 24 hours
+    });
+    res
+      .status(200)
+      .json({
+        message: "Token refreshed",
+        user: {
+          id: user._id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+        },
+      });
+  } catch (err) {
+    next({ status: 500, message: err.message || "Token refresh error" });
+  }
+};
 
-export { login, register };
+const logout = async (req, res, next) => {
+  try {
+    res.clearCookie("accessToken", {
+      httpOnly: true,
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      secure: process.env.NODE_ENV === "production",
+    });
+    res.clearCookie("refreshToken", {
+      httpOnly: true,
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      secure: process.env.NODE_ENV === "production",
+    });
+    res.status(200).json({ message: "Logout successful" });
+  } catch (err) {
+    next({ status: 500, message: err.message || "Logout error" });
+  }
+};
+
+export { login, register, logout, refreshToken };
