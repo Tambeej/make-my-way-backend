@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 
 const authenticate = (req, res, next) => {
   // const token = req.header("Authorization")?.replace("Bearer ", "");
-  const token = req.cookies.token;
+  const token = req.cookies.accessToken;
 
   if (!token) {
     throw { status: 401, message: "No token provided" };

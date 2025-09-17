@@ -33,7 +33,7 @@ const authModel = {
         name,
         email,
         passwordHash,
-        preferences: { activities: [], food: [] }, // Default empty
+        preferences: { activities: [], food: [] }, 
         sharedTrips: [],
       });
       await user.save();

@@ -27,11 +27,6 @@ app.use("/api/auth", authRouter);
 
 app.use("/api/trip", tripRouter);
 
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(err.status || 500).json({ message: err.message });
-});
-
 //Connect to mongo API
 const startServer = async () => {
   await connectDB(); // Connect to DB
@@ -41,3 +36,12 @@ const startServer = async () => {
 };
 
 startServer();
+
+// Error Handling Middleware (always in the END)
+app.use((err, req, res, next) => {
+  console.error(err);
+  res.status(err.status || 500).json({
+    success: false,
+    message: err.message || "Server Error",
+  });
+});
