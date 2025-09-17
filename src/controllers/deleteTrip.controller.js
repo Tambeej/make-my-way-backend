@@ -5,17 +5,6 @@ import Trip from "../models/Trip.js"
 export const deleteTripController = async (req, res) => {
   try {
     const tripId = req.params.id
-    //check if user is owner before deleting
-    const userId = req.user.id
-    const trip = await Trip.findById(tripId)
-
-    if (!trip) {
-      return res.status(404).json({ error: "Trip not found" })
-    }
-
-    if (trip.userId.toString() !== userId) {
-      return res.status(403).json({ error: "You are not authorized to delete this trip" })
-    }
 
     const deletedTrip = await Trip.findByIdAndDelete(tripId)
 

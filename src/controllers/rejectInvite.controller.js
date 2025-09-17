@@ -3,16 +3,8 @@ import Trip from "../models/Trip.js"
 
 export const rejectInviteController = async (req, res) => {
   try {
-    const userId = req.user.id
     const invitedUserEmail = req.body.invitedUserEmail
     const tripId = req.params.id
-
-    const trip = await Trip.findById(tripId)
-    if (!trip) return res.status(404).json({ error: "Trip not found" })
-
-    if (trip.userId.toString() !== userId.toString()) {
-      return res.status(403).json({ error: "You are not the owner of this trip" })
-    }
 
     const updatedUser = await User.findOneAndUpdate(
       { email: invitedUserEmail },

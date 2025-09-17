@@ -11,6 +11,7 @@ import { rejectInviteController } from "../controllers/rejectInvite.controller.j
 import { getMembersController } from "../controllers/getMembers.controller.js"
 import { leaveSharedTripController } from "../controllers/leaveSharedTrip.controller.js"
 import authenticate from "../middlewares/authMiddleware.js"
+import { checkTripOwner } from "../middlewares/checkTripOwner.js"
 
 const router = Router()
 
@@ -23,14 +24,14 @@ router.get("/my", authenticate, getTripsOfUserController) // Get all trips creat
 router.get("/shared", authenticate, getSharedWithUserTripsController) // Get trips shared with the current user
 
 //Trip sharing
-router.post("/:id/share", authenticate, inviteUserController) // Invite another user to a trip by email
+router.post("/:id/share", authenticate, checkTripOwner, inviteUserController) // Invite another user to a trip by email
 router.get("/:id/members", authenticate, getMembersController) // Get all members of a trip (owner + invited users)
-router.delete("/:id/share", authenticate, rejectInviteController) // Owner removes a user from the trip (revoke access)
+router.delete("/:id/share", authenticate, checkTripOwner, rejectInviteController) // Owner removes a user from the trip (revoke access)
 router.delete("/shared/:id", authenticate, leaveSharedTripController) // Current user leaves a shared trip
 
 //Trip CRUD
 router.post("/", authenticate, saveTripController) // Create and save a new trip
 router.get("/:id", authenticate, getTripByIdController) // Get trip details by trip ID
-router.delete("/:id", authenticate, deleteTripController) // Delete a trip (only owner can delete)
+router.delete("/:id", authenticate, checkTripOwner, deleteTripController) // Delete a trip (only owner can delete)
 
 export default router
