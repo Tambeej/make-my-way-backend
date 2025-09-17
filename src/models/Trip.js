@@ -83,6 +83,7 @@ const tripSchema = new mongoose.Schema(
     tripPath: {
       overviewPolyline: { type: String, required: true },
     },
+    pdfUrl: { type: String },
   },
   { timestamps: true }
 )

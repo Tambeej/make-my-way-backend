@@ -23,9 +23,9 @@ app.get("/", (req, res) => {
   res.send("Welcome to the Trip Planner API!")
 })
 
-app.use("/api/auth", authRouter)
+app.use("/auth", authRouter)
 
-app.use("/api/trip", tripRouter)
+app.use("/trip", tripRouter)
 
 app.use((err, req, res, next) => {
   console.error(err.stack)

@@ -1,6 +1,7 @@
 import mongoose from "mongoose"
 import User from "../models/User.js"
 import Trip from "../models/Trip.js"
+import { deleteTripPDF, generateTripPDF } from "../services/pdf.service.js"
 
 // const body = {
 //   tripInfo: {
@@ -121,6 +122,10 @@ export const saveTripController = async (req, res) => {
       return res.status(400).json({ error: "Validation failed", details: validationError.errors })
     }
 
+    // Generate PDF for the saved trip
+    const pdfUrl = await generateTripPDF(newTrip)
+    newTrip.pdfUrl = pdfUrl
+
     const savedTrip = await newTrip.save()
 
     res.status(201).json({
@@ -129,6 +134,11 @@ export const saveTripController = async (req, res) => {
     })
   } catch (err) {
     console.error("Error saving trip:", err)
+    try {
+      await deleteTripPDF(newTrip._id)
+    } catch (deleteErr) {
+      console.error("Error deleting PDF:", deleteErr)
+    }
     return res.status(500).json({ error: "Failed to save trip" })
   }
 }
