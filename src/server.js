@@ -5,9 +5,9 @@ import cookieParser from "cookie-parser";
 
 dotenv.config();
 import connectDB from "./config/db.js";
-
 import tripRouter from "./routes/trip.routes.js";
 import authRouter from "./routes/authRouter.js";
+import userRouter from "./routes/userRouter.js";
 import authenticate from "./middlewares/authMiddleware.js";
 
 const app = express();
@@ -26,6 +26,7 @@ app.get("/", (req, res) => {
 app.use("/api/auth", authRouter);
 
 app.use("/api/trip", tripRouter);
+app.use("/api/users", userRouter);
 
 //Connect to mongo API
 const startServer = async () => {

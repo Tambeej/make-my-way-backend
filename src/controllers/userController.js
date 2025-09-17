@@ -12,12 +12,6 @@ const getAllUsers = async (req, res, next) => {
 
 const getUserById = async (req, res, next) => {
   try {
-    if (req.user.id !== req.params.id) {
-      return next({
-        status: 403,
-        message: "Forbidden: You can only access your own data",
-      });
-    }
     const user = await User.findById(req.params.id).select("-passwordHash");
     if (!user) {
       return next({ status: 404, message: "User not found" });
@@ -73,4 +67,4 @@ const deleteUser = async (req, res, next) => {
   }
 };
 
-export default { deleteUser, updateUser, getAllUsers, getUserById };
+export { updateUser, deleteUser, getAllUsers, getUserById };
