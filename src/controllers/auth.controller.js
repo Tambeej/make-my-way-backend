@@ -1,19 +1,4 @@
-import authModel from "../models/authModel.js";
-import jwt from "jsonwebtoken";
-
-const generateAccessToken = (user) => {
-  return jwt.sign({ id: user._id, email: user.email }, process.env.JWT_SECRET, {
-    expiresIn: "24h",
-  });
-};
-
-const generateRefreshToken = (user) => {
-  return jwt.sign(
-    { id: user._id, email: user.email },
-    process.env.JWT_REFRESH_SECRET,
-    { expiresIn: "7d" }
-  );
-};
+import authModel from "../services/auth.service.js";
 
 async function login(req, res, next) {
   try {
@@ -25,8 +10,8 @@ async function login(req, res, next) {
     if (!user) {
       next({ status: 401, message: "invalid email or password" });
     }
-    const accessToken = generateAccessToken(user);
-    const refreshToken = generateRefreshToken(user);
+    const accessToken = authModel.generateAccessToken(user);
+    const refreshToken = authModel.generateRefreshToken(user);
     res.cookie("accessToken", accessToken, {
       httpOnly: true,
       sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
@@ -55,8 +40,8 @@ async function register(req, res, next) {
 
     const user = await authModel.register(name, email, password);
 
-    const accessToken = generateAccessToken(user);
-    const refreshToken = generateRefreshToken(user);
+    const accessToken = authModel.generateAccessToken(user);
+    const refreshToken = authModel.generateRefreshToken(user);
     res.cookie("accessToken", accessToken, {
       httpOnly: true,
       sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
@@ -90,24 +75,22 @@ const refreshToken = async (req, res, next) => {
     if (!user) {
       return next({ status: 401, message: "User not found" });
     }
-    const newAccessToken = generateAccessToken(user);
+    const newAccessToken = authModel.generateAccessToken(user);
     res.cookie("accessToken", newAccessToken, {
       httpOnly: true,
       sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
       secure: process.env.NODE_ENV === "production",
       maxAge: 24 * 60 * 60 * 1000, // 24 hours
     });
-    res
-      .status(200)
-      .json({
-        message: "Token refreshed",
-        user: {
-          id: user._id,
-          name: user.name,
-          email: user.email,
-          role: user.role,
-        },
-      });
+    res.status(200).json({
+      message: "Token refreshed",
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
+    });
   } catch (err) {
     next({ status: 500, message: err.message || "Token refresh error" });
   }
@@ -115,15 +98,25 @@ const refreshToken = async (req, res, next) => {
 
 const logout = async (req, res, next) => {
   try {
+    const refreshToken = req.cookies.refreshToken;
+    if (refreshToken) {
+      await authModel.logout(refreshToken);
+      // await User.updateOne({ refreshToken }, { $unset: { refreshToken: "" } });
+    } else {
+      return next({ status: 401, message: "User is not logged in" });
+    }
+
     res.clearCookie("accessToken", {
       httpOnly: true,
       sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
       secure: process.env.NODE_ENV === "production",
+      path: "/",
     });
     res.clearCookie("refreshToken", {
       httpOnly: true,
       sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
       secure: process.env.NODE_ENV === "production",
+      path: "/",
     });
     res.status(200).json({ message: "Logout successful" });
   } catch (err) {
@@ -131,4 +124,16 @@ const logout = async (req, res, next) => {
   }
 };
 
-export { login, register, logout, refreshToken };
+const getUserInfo = async (req, res, next) => {
+  try {
+    const user = await authModel.getUserInfo(req.user.id);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    res.status(200).json({ message: "User info retrieved", user });
+  } catch (err) {
+    next({ status: 500, message: err.message || "Error fetching user info" });
+  }
+};
+
+export { login, register, logout, refreshToken, getUserInfo };

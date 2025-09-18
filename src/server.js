@@ -13,7 +13,7 @@ import authenticate from "./middlewares/authMiddleware.js";
 const app = express()
 
 // Middleware
-app.use(cors({ credentials: true, origin: "http://localhost:3000" })); // Adjust for frontend
+app.use(cors({ credentials: true, origin: "*" })); // Adjust for frontend
 app.use(cookieParser());
 app.use(express.json());
 
