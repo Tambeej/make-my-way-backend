@@ -1,4 +1,6 @@
 import puppeteer from "puppeteer"
+import { executablePath } from "puppeteer"
+
 import { supabase } from "../config/supabase.js"
 
 const daysMap = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
@@ -83,6 +85,7 @@ export const generateTripPDF = async (trip) => {
   const browser = await puppeteer.launch({
     headless: true,
     args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    executablePath: executablePath(),
   })
   
   const page = await browser.newPage()
