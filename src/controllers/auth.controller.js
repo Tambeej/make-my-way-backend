@@ -30,7 +30,7 @@ async function login(req, res, next) {
    //    secure: process.env.NODE_ENV === "production",
    //    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
    //  });
-
+const isLocalhost = req.hostname.includes("localhost")
     
 res.cookie("accessToken", accessToken, {
   httpOnly: true,
