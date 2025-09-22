@@ -20,6 +20,7 @@ export const getTripsOfUserController = async (req, res) => {
       originInfo: trip.originInfo,
       destinationInfo: trip.destinationInfo,
       tripPath: trip.tripPath.overviewPolyline,
+      pdfUrl: trip.pdfUrl,
       itinerary: trip.itinerary,
       createdAt: trip.createdAt,
     }))
