@@ -11,9 +11,10 @@ import userRouter from "./routes/userRouter.js"
 
 const app = express()
 
+
 const allowedOrigins = [
-  "http://localhost:3000", // local dev frontend
-  "https://map-my-way-frontend.onrender.com", // deployed frontend
+  "http://localhost:3000",
+  "https://map-my-way-frontend.onrender.com",
 ]
 
 // --- Middleware ---
@@ -21,7 +22,7 @@ app.use(
   cors({
     origin: function (origin, callback) {
       if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true)
+        callback(null, origin || true)
       } else {
         callback(new Error("Not allowed by CORS"))
       }
@@ -42,7 +43,7 @@ app.use("/auth", authRouter)
 app.use("/trip", tripRouter)
 app.use("/users", userRouter)
 
-// --- Error Handling ---
+// --- Error Handling  ---
 app.use((err, req, res, next) => {
   console.error(err.stack)
   res.status(err.status || 500).json({
@@ -53,7 +54,7 @@ app.use((err, req, res, next) => {
 
 // --- Start Server ---
 const startServer = async () => {
-  await connectDB() // Connect to DB
+  await connectDB()
   app.listen(process.env.PORT, () => {
     console.log(`✅ Server running on port ${process.env.PORT}`)
   })
