@@ -12,8 +12,23 @@ import authenticate from "./middlewares/authMiddleware.js";
 
 const app = express()
 
+const allowedOrigins = [
+  "http://localhost:3000", // local dev frontend
+  "https://map-my-way-frontend.onrender.com", // your deployed frontend
+];
+
+
 // Middleware
-app.use(cors({ credentials: true, origin: "*" })); // Adjust for frontend
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, origin);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true, // 🔑 allow cookies
+}));
 app.use(cookieParser());
 app.use(express.json());
 
