@@ -79,7 +79,7 @@ export const searchNearbyPlaces = async (locationString, category, radius) => {
         category,
         {
           summary: details.editorial_summary?.overview || "",
-          openingHours: details.opening_hours.periods,
+          openingHours: details.opening_hours?.periods,
           phone: details.international_phone_number,
           website: details.website,
           url: details.url,
