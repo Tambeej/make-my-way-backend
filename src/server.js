@@ -14,7 +14,7 @@ const app = express()
 
 const allowedOrigins = [
   "http://localhost:3000", // local dev frontend
-  "https://map-my-way-frontend.onrender.com", // your deployed frontend
+  "https://map-my-way-frontend.onrender.com", // deployed frontend
 ];
 
 
@@ -27,7 +27,7 @@ app.use(cors({
       callback(new Error("Not allowed by CORS"));
     }
   },
-  credentials: true, // 🔑 allow cookies
+  credentials: true, 
 }));
 app.use(cookieParser());
 app.use(express.json());

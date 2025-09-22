@@ -12,12 +12,18 @@ async function login(req, res, next) {
     }
     const accessToken = authModel.generateAccessToken(user);
     const refreshToken = authModel.generateRefreshToken(user);
+    // res.cookie("accessToken", accessToken, {
+    //   httpOnly: true,
+    //   sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+    //   secure: process.env.NODE_ENV === "production",
+    //   maxAge: 24 * 60 * 60 * 1000, // 24 hours
+    // });
     res.cookie("accessToken", accessToken, {
-      httpOnly: true,
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-      secure: process.env.NODE_ENV === "production",
-      maxAge: 24 * 60 * 60 * 1000, // 24 hours
-    });
+  httpOnly: true,
+  sameSite: "lax", // or "none" if frontend/backend are on different domains
+  secure: process.env.NODE_ENV === "production", 
+  maxAge: 24 * 60 * 60 * 1000,
+});
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
@@ -42,12 +48,18 @@ async function register(req, res, next) {
 
     const accessToken = authModel.generateAccessToken(user);
     const refreshToken = authModel.generateRefreshToken(user);
+    // res.cookie("accessToken", accessToken, {
+    //   httpOnly: true,
+    //   sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+    //   secure: process.env.NODE_ENV === "production",
+    //   maxAge: 24 * 60 * 60 * 1000, // 24 hours
+    // });
     res.cookie("accessToken", accessToken, {
-      httpOnly: true,
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-      secure: process.env.NODE_ENV === "production",
-      maxAge: 24 * 60 * 60 * 1000, // 24 hours
-    });
+  httpOnly: true,
+  sameSite: "lax", // or "none" if frontend/backend are on different domains
+  secure: process.env.NODE_ENV === "production", 
+  maxAge: 24 * 60 * 60 * 1000,
+});
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
