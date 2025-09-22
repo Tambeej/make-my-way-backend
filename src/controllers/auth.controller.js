@@ -18,12 +18,12 @@ async function login(req, res, next) {
     //   secure: process.env.NODE_ENV === "production",
     //   maxAge: 24 * 60 * 60 * 1000, // 24 hours
     // });
-    res.cookie("accessToken", accessToken, {
-  httpOnly: true,
-  sameSite: "lax", // or "none" if frontend/backend are on different domains
-  secure: process.env.NODE_ENV === "production", 
-  maxAge: 24 * 60 * 60 * 1000,
-});
+   res.cookie("accessToken", accessToken, {
+      httpOnly: true,
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      secure: process.env.NODE_ENV === "production" ? true : false,
+      maxAge: 24 * 60 * 60 * 1000, // 24 hours
+    });
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
@@ -55,11 +55,11 @@ async function register(req, res, next) {
     //   maxAge: 24 * 60 * 60 * 1000, // 24 hours
     // });
     res.cookie("accessToken", accessToken, {
-  httpOnly: true,
-  sameSite: "lax", // or "none" if frontend/backend are on different domains
-  secure: process.env.NODE_ENV === "production", 
-  maxAge: 24 * 60 * 60 * 1000,
-});
+      httpOnly: true,
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      secure: process.env.NODE_ENV === "production" ? true : false,
+      maxAge: 24 * 60 * 60 * 1000, // 24 hours
+    });
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
