@@ -2,55 +2,52 @@ import express from "express"
 import cors from "cors"
 import dotenv from "dotenv"
 import cookieParser from "cookie-parser"
+import connectDB from "./config/db.js"
 
-dotenv.config();
-import connectDB from "./config/db.js";
-import tripRouter from "./routes/trip.routes.js";
-import authRouter from "./routes/authRouter.js";
-import userRouter from "./routes/userRouter.js";
-import authenticate from "./middlewares/authMiddleware.js";
+dotenv.config()
 
 const app = express()
 
-// Middleware
-app.use(cors({ credentials: true, origin: "http://localhost:3000" })); // Adjust for frontend
-app.use(cookieParser());
-app.use(express.json());
+// ✅ CORS
+app.use(cors({
+  origin: ["http://localhost:3000", "http://127.0.0.1:3000"],
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"]
+}))
 
+// ✅ Middleware
+app.use(cookieParser())
+app.use(express.json())
 
-//Routes
-//test api
+// ✅ Routes
+import tripRouter from "./routes/trip.routes.js"
+import authRouter from "./routes/authRouter.js"
+import userRouter from "./routes/userRouter.js"
+
 app.get("/", (req, res) => {
   res.send("Welcome to the Trip Planner API!")
 })
 
 app.use("/auth", authRouter)
+app.use("/trip", tripRouter)
+app.use("/users", userRouter)
 
-app.use("/trip", tripRouter);
-app.use("/users", userRouter);
-
-
+// ✅ Error Handling (один раз, в конце)
 app.use((err, req, res, next) => {
-  console.error(err.stack)
-  res.status(err.status || 500).json({ message: err.message })
+  console.error(err)
+  res.status(err.status || 500).json({
+    success: false,
+    message: err.message || "Server Error",
+  })
 })
 
-//Connect to mongo API
+// ✅ Connect DB + Start server
 const startServer = async () => {
-  await connectDB() // Connect to DB
+  await connectDB()
   app.listen(process.env.PORT, () => {
     console.log(`Server running on port ${process.env.PORT}`)
   })
 }
 
-startServer();
-
-// Error Handling Middleware (always in the END)
-app.use((err, req, res, next) => {
-  console.error(err);
-  res.status(err.status || 500).json({
-    success: false,
-    message: err.message || "Server Error",
-  });
-});
-
+startServer()
