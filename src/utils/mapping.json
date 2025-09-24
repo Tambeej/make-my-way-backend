@@ -26,10 +26,12 @@
     "italian": { "type": "restaurant", "keyword": "italian" },
     "japanese": { "type": "restaurant", "keyword": "japanese" },
     "sushi": { "type": "restaurant", "keyword": "sushi" },
-    "georgian": { "type": "restaurant", "keyword": "georgian" },
-    "fast_food": { "type": "restaurant", "keyword": "fast food" },
+    "bakery": { "type": "bakery" },
+    "restaurant": { "type": "restaurant" },
     "street_food": { "type": "restaurant", "keyword": "street food" },
+    "fast_food": { "type": "restaurant", "keyword": "fast food" },
     "cafe": { "type": "cafe" },
-    "bakery": { "type": "bakery" }
+    "local": { "type": "restaurant", "keyword": "local food" }
+
   }
 }

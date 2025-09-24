@@ -11,11 +11,7 @@ import userRouter from "./routes/userRouter.js"
 
 const app = express()
 
-
-const allowedOrigins = [
-  "http://localhost:3000",
-  "https://map-my-way-frontend.onrender.com",
-]
+const allowedOrigins = ["http://localhost:3000", "https://map-my-way-frontend.onrender.com"]
 
 // --- Middleware ---
 app.use(

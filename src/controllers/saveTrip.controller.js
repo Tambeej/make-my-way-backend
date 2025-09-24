@@ -136,6 +136,6 @@ export const saveTripController = async (req, res) => {
     } catch (deleteErr) {
       console.error("Error deleting PDF:", deleteErr)
     }
-    return res.status(500).json({ error: "Failed to save trip" })
+    return res.status(500).json({ error: "Failed to save trip: " + err.message })
   }
 }
