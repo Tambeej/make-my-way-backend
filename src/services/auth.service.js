@@ -4,8 +4,9 @@ import jwt from "jsonwebtoken";
 
 const authModel = {
   async login(email, password) {
+    const emailLowerCase = email.toLowerCase();
     try {
-      const user = await User.findOne({ email });
+      const user = await User.findOne({ emailLowerCase });
       if (!user) {
         return null;
       }
@@ -23,8 +24,10 @@ const authModel = {
   },
 
   async register(name, email, password, pref_food = [], pref_activities = []) {
+    
+    const emailLowerCase = email.toLowerCase();
     try {
-      const existingUser = await User.findOne({ email });
+      const existingUser = await User.findOne({ emailLowerCase });
       if (existingUser) {
         throw new Error("Email already exists");
       }
@@ -32,7 +35,7 @@ const authModel = {
       const passwordHash = await bcrypt.hash(password, 12);
       const user = new User({
         name,
-        email,
+        emailLowerCase,
         passwordHash,
         preferences: { activities: pref_activities, food: pref_food },
         sharedTrips: [],
