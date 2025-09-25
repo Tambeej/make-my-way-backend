@@ -12,39 +12,18 @@ async function login(req, res, next) {
     }
     const accessToken = authModel.generateAccessToken(user);
     const refreshToken = authModel.generateRefreshToken(user);
-    // res.cookie("accessToken", accessToken, {
-    //   httpOnly: true,
-    //   sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-    //   secure: process.env.NODE_ENV === "production",
-    //   maxAge: 24 * 60 * 60 * 1000, // 24 hours
-    // });
-   // res.cookie("accessToken", accessToken, {
-   //    httpOnly: true,
-   //    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-   //    secure: process.env.NODE_ENV === "production" ? true : false,
-   //    maxAge: 24 * 60 * 60 * 1000, // 24 hours
-   //  });
-   //  res.cookie("refreshToken", refreshToken, {
-   //    httpOnly: true,
-   //    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-   //    secure: process.env.NODE_ENV === "production",
-   //    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-   //  });
-const isLocalhost = req.hostname.includes("localhost")
-    
-res.cookie("accessToken", accessToken, {
-  httpOnly: true,
-  sameSite: "none",
-  secure: !isLocalhost,
-  maxAge: 24 * 60 * 60 * 1000,
-})
-
-res.cookie("refreshToken", refreshToken, {
-  httpOnly: true,
-  sameSite: "none",
-  secure: !isLocalhost,
-  maxAge: 7 * 24 * 60 * 60 * 1000,
-})
+   res.cookie("accessToken", accessToken, {
+      httpOnly: true,
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      secure: process.env.NODE_ENV === "production" ? true : false,
+      maxAge: 24 * 60 * 60 * 1000, // 24 hours
+    });
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    });
 
     res.status(200).json({ message: "Login successful", user });
   } catch (err) {
@@ -63,12 +42,7 @@ async function register(req, res, next) {
 
     const accessToken = authModel.generateAccessToken(user);
     const refreshToken = authModel.generateRefreshToken(user);
-    // res.cookie("accessToken", accessToken, {
-    //   httpOnly: true,
-    //   sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-    //   secure: process.env.NODE_ENV === "production",
-    //   maxAge: 24 * 60 * 60 * 1000, // 24 hours
-    // });
+
     res.cookie("accessToken", accessToken, {
       httpOnly: true,
       sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
