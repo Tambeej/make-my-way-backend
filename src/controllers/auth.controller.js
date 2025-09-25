@@ -1,3 +1,4 @@
+import User from "../models/User.js";
 import authModel from "../services/auth.service.js";
 
 async function login(req, res, next) {
@@ -160,6 +161,16 @@ const getUserInfo = async (req, res, next) => {
     res.status(200).json({ message: "User info retrieved", user });
   } catch (err) {
     next({ status: 500, message: err.message || "Error fetching user info" });
+  }
+};
+
+const authMe = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user.id).select("-passwordHash")
+    if (!user) return res.status(404).json({ error: "User not found" })
+    res.json({ user })
+  } catch (err) {
+    res.status(500).json({ error: "Server error" })
   }
 };
 

@@ -1,0 +1,18 @@
+sequenceDiagram
+  autonumber
+  participant U as Браузер
+  participant FE as Frontend
+  participant API as Backend API
+  participant AUTH as Auth
+  participant DB as MongoDB
+  participant R as Redis
+
+  U->>FE: Ввод email+password
+  FE->>API: POST /v1/auth/login
+  API->>AUTH: validate credentials
+  AUTH->>DB: find user by email
+  DB-->>AUTH: user + passwordHash
+  AUTH-->>API: OK, issue tokens
+  API->>R: (опц.) сохранить/ротировать refresh
+  API-->>FE: 200 {user}\nSet-Cookie: accessToken, refreshToken
+  FE-->>U: авторизованное состояние

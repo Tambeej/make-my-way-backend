@@ -1,0 +1,62 @@
+graph LR
+  %% Группы
+  subgraph Client["Client"]
+    BROWSER["Браузер пользователя"]
+  end
+
+  subgraph Frontend["Frontend (Map My Way Frontend)"]
+    FE["Веб‑клиент (SPA)"]
+  end
+
+  subgraph Backend["Backend (Express API v1)"]
+    API["Express API"]
+    AUTH["Auth (JWT cookies)"]
+    TRIP["Trip Service"]
+    SHARE["Sharing Service"]
+    PLAN["Planner Service"]
+    PDF["PDF Service"]
+  end
+
+  subgraph Data["Data Layer"]
+    DB(("MongoDB"))
+    REDIS(("Redis (кэш/очереди)"))
+  end
+
+  subgraph External["External Services"]
+    GEO["Google Geocoding API"]
+    DIR["Google Directions API"]
+    PLC["Google Places API"]
+    GEM["Gemini (AI)"]
+    STORE["S3/Supabase Storage (PDF)"]
+    NOTIF["Email/SMS (опц.)"]
+  end
+
+  BROWSER -->|"HTTPS, UI, Cookies passthrough"| FE
+  FE <-->|"HTTPS JSON /v1/... (credentials: include)"| API
+
+  FE -.->|"POST /v1/auth/login\\nSet-Cookie: accessToken, refreshToken"| API
+  FE -.->|"POST /v1/trip/plan (JWT)"| API
+  FE -.->|"POST /v1/trip/path (JWT)"| API
+  FE -.->|"POST /v1/trip (save) (JWT)"| API
+  FE -.->|"GET /v1/trip/:id (JWT)"| API
+  FE -.->|"POST /v1/trip/:id/share (owner)"| API
+
+  API --> AUTH
+  API --> TRIP
+  API --> SHARE
+  API --> PLAN
+  API --> PDF
+
+  AUTH -->|"find user, verify passwordHash"| DB
+  AUTH <-->|"refresh tokens / blacklist (опц.)"| REDIS
+  TRIP <-->|"CRUD trips, members"| DB
+  SHARE <-->|"members, роли"| DB
+
+  PLAN -->|"address→coords"| GEO
+  PLAN -->|"route, overview_polyline"| DIR
+  PLAN -->|"nearby/details (≤3 per segment)"| PLC
+  PLAN -->|"prompt → JSON план"| GEM
+  PDF -->|"upload PDF → public URL"| STORE
+  SHARE -.->|"invite notification"| NOTIF
+
+  API -->|"JSON; Set/Unset-Cookie; PDF URL"| FE
