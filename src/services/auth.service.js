@@ -35,7 +35,7 @@ const authModel = {
       const passwordHash = await bcrypt.hash(password, 12);
       const user = new User({
         name,
-        email: emailLowerCase,
+        emailLowerCase,
         passwordHash,
         preferences: { activities: pref_activities, food: pref_food },
         sharedTrips: [],
