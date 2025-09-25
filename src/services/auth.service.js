@@ -6,7 +6,7 @@ const authModel = {
   async login(email, password) {
     const emailLowerCase = email.toLowerCase();
     try {
-      const user = await User.findOne({ email: emailLowerCase });
+      const user = await User.findOne({ emailLowerCase });
       if (!user) {
         return null;
       }
@@ -27,7 +27,7 @@ const authModel = {
     
     const emailLowerCase = email.toLowerCase();
     try {
-      const existingUser = await User.findOne({email: emailLowerCase });
+      const existingUser = await User.findOne({ emailLowerCase });
       if (existingUser) {
         throw new Error("Email already exists");
       }
