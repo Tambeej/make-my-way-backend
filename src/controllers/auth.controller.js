@@ -174,4 +174,4 @@ const authMe = async (req, res, next) => {
   }
 };
 
-export { login, register, logout, refreshToken, getUserInfo };
+export { login, register, logout, refreshToken, getUserInfo, authMe };
